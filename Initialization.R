@@ -12,7 +12,7 @@ WVS_Data[WVS_Data == -2] = NA
 WVS_Data[WVS_Data == -4] = NA
 WVS_Data[WVS_Data == -5] = NA
 
-WVS_Data_By_Country <- WVS_Data %>% group_by(B_COUNTRY_ALPHA) %>% summarize(across(c(Q199:Q222, Q251:Q252, Q240, Q57:Q63, Q196:Q198, Q131:Q141, E1_LITERACY), ~ mean(.x, na.rm = TRUE)))
+WVS_Data_By_Country <- WVS_Data %>% group_by(B_COUNTRY_ALPHA) %>% summarize(across(c(Q199, Q252, Q240, Q57, Q131, E1_LITERACY), ~ mean(.x, na.rm = TRUE))) # not final pa
 ## Nawawala yung political trust pakihanap saan, and limited countries lang ang political trust so maybe drop completely?
 
 ## Can't figure out how to summarize into the variables we have, kasi pag % share how do we combine across questions??
@@ -32,6 +32,7 @@ non_WVS_data <- urban %>%
   full_join(population_growth, by="Country Code") %>% 
   full_join(literacy, by="Country Code") %>%
   full_join(CPI, by=c("Country Code" = "ISO3"))
+non_WVS_data[149,1] <- "MOR" # Morocco is coded as MAR sa non wvs data
 
 dataset <- left_join(WVS_Data_By_Country, non_WVS_data, by=c("B_COUNTRY_ALPHA" = "Country Code"))
 ## modify WVS_Data_By_Country to actual form of WVS variables for analysis
