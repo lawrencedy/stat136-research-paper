@@ -2,6 +2,7 @@ library(tidyverse)
 library(psych)
 library(olsrr)
 library(readxl)
+library(dplyr)
 
 load("WVS_Cross-National_Wave7.RData") ## Loads WVS Data
 View(WVS_Data)
@@ -12,7 +13,18 @@ WVS_Data[WVS_Data == -2] = NA
 WVS_Data[WVS_Data == -4] = NA
 WVS_Data[WVS_Data == -5] = NA
 
-WVS_Data_By_Country <- WVS_Data %>% group_by(B_COUNTRY_ALPHA) %>% summarize(across(c(Q199:Q222, Q251:Q252, Q240, Q57:Q63, Q196:Q198, Q131:Q141, E1_LITERACY), ~ mean(.x, na.rm = TRUE)))
+## Natirang likert variables:
+## Q199 -- Political Interest and Participation (1 - very interested, 4-not at all interested)
+## Q252 -- Satisfaction with Political System (1-not satisfied at all, 10-completely satisfied)
+## Q240 -- Left/Right Political Ideology (1-Left, 10-Right)
+## Q57 -- Social Trust (dichotomized na originally: 1- most people can be trusted, 2- need to be careful)
+## Q131 -- Perception of Security (1-most secure, 4-not at all secure)
+
+## Dichotomizing likert variables and getting their mean
+WVS_Data_By_Country <- WVS_Data %>% mutate_at(vars(c(Q199, Q131)), funs(case_when( . == 1 | . == 2 ~ 1, TRUE ~ 0))) %>% mutate_at(vars(c(Q252, Q240)),
+    funs(case_when( . == 10 | . == 9 | . == 8 | . == 7 | . == 6 ~ 1, TRUE ~ 0))) %>% mutate(Q57=case_when(Q57 == 1 ~ 1, TRUE ~ 0)) %>% group_by(B_COUNTRY_ALPHA) %>% summarize(across(c(Q199, Q252, Q240, Q57, Q131, E1_LITERACY), ~ mean(.x, na.rm = TRUE)))
+
+
 ## Nawawala yung political trust pakihanap saan, and limited countries lang ang political trust so maybe drop completely?
 
 ## Can't figure out how to summarize into the variables we have, kasi pag % share how do we combine across questions??
@@ -37,7 +49,8 @@ dataset <- left_join(WVS_Data_By_Country, non_WVS_data, by=c("B_COUNTRY_ALPHA" =
 ## modify WVS_Data_By_Country to actual form of WVS variables for analysis
 
 View(dataset)
-## dataset contains all necessary variables now BUT the WVS variables are not in dichotomous format yet, and have to deal with the NAs
+
+## dataset contains all necessary variables now, WVS variables are in dichotomous format na, and have to deal with the NAs
 
 ## To do:
 ## 1. Decide how to recode WVS-based likert variables
