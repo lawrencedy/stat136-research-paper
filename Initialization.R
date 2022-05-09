@@ -13,6 +13,7 @@ WVS_Data[WVS_Data == -2] = NA
 WVS_Data[WVS_Data == -4] = NA
 WVS_Data[WVS_Data == -5] = NA
 
+<<<<<<< HEAD
 ## Natirang likert variables:
 ## Q199 -- Political Interest and Participation (1 - very interested, 4-not at all interested)
 ## Q252 -- Satisfaction with Political System (1-not satisfied at all, 10-completely satisfied)
@@ -26,6 +27,8 @@ WVS_Data_By_Country <- WVS_Data %>% mutate_at(vars(c(Q199, Q131)), funs(case_whe
 
 
 ## Nawawala yung political trust pakihanap saan, and limited countries lang ang political trust so maybe drop completely?
+=======
+>>>>>>> bd4c80909493a28a6a12dcdb59772daabc20e404
 
 ## Can't figure out how to summarize into the variables we have, kasi pag % share how do we combine across questions??
 
@@ -44,6 +47,7 @@ non_WVS_data <- urban %>%
   full_join(population_growth, by="Country Code") %>% 
   full_join(literacy, by="Country Code") %>%
   full_join(CPI, by=c("Country Code" = "ISO3"))
+non_WVS_data[149,1] <- "MOR" # Morocco is coded as MAR sa non wvs data
 
 dataset <- left_join(WVS_Data_By_Country, non_WVS_data, by=c("B_COUNTRY_ALPHA" = "Country Code"))
 ## modify WVS_Data_By_Country to actual form of WVS variables for analysis
