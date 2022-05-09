@@ -12,8 +12,6 @@ WVS_Data[WVS_Data == -2] = NA
 WVS_Data[WVS_Data == -4] = NA
 WVS_Data[WVS_Data == -5] = NA
 
-WVS_Data_By_Country <- WVS_Data %>% group_by(B_COUNTRY_ALPHA) %>% summarize(across(c(Q199, Q252, Q240, Q57, Q131, E1_LITERACY), ~ mean(.x, na.rm = TRUE))) # not final pa
-## Nawawala yung political trust pakihanap saan, and limited countries lang ang political trust so maybe drop completely?
 
 ## Can't figure out how to summarize into the variables we have, kasi pag % share how do we combine across questions??
 
