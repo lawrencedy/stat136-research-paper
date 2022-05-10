@@ -65,6 +65,7 @@ View(dataset)
 ## 8. Conduct variable selection
 ## 9. Do diagnostic checking (normality, linearity, heteroskedasticity, autocorrelation, correlation between indep var, outliers, influential observations)
 ## 10. Rerun final model for analysis using lm formula, interpret results
+## Check zeros, moved deadline to June 8 or 10?
 
 ## Possible reference paper: https://drive.google.com/drive/u/0/folders/0BzMkFhdwCZrpbDBOSm5iRHBWeEk?resourcekey=0-h2EmqZujzhhsSmhaFkSQzg
 
