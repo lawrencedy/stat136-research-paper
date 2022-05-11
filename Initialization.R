@@ -37,15 +37,17 @@ urban <- read_csv("API_SP.URB.TOTL.IN.ZS_DS2_en_csv_v2_4030202.csv", skip = 4) %
 GDP_capita <- read_csv("API_NY.GDP.PCAP.PP.CD_DS2_en_csv_v2_4022086.csv", skip = 4) %>% select(c(2, 64)) %>% rename(gdp_capita_2019 = '2019') ## Used 2019 data since 2020 is weird for GDP for obvious reasons
 GDP_growth <- read_csv("API_NY.GDP.MKTP.KD.ZG_DS2_en_csv_v2_4019069.csv", skip = 4) %>% select(c(2, 64)) %>% rename(gdp_growth_2019 = '2019') ## Used 2019 data since 2020 is weird for GDP for obvious reasons
 population_growth <- read_csv("API_SP.POP.GROW_DS2_en_csv_v2_4028432.csv", skip = 4) %>% select(c(2, 64))  %>% rename(pop_growth_2019 = '2019') ## Used 2019 data since 2020 is weird for population for obvious reasons
+education <- read_csv("Education index.csv") %>% select(c(3,4)) %>% rename(education_2019 = "2019")
+
 literacy <- read_excel("API_SE.ADT.LITR.ZS_DS2_en_excel_v2_4027578.xls", skip = 3) %>% select(c(2, 67)) %>% rename(literacy_latest = 'LATEST') ## I modified the data file to have a column for latest literacy rate, will merge with WVS Literacy for missing data
 
 non_WVS_data <- urban %>% 
   full_join(GDP_capita, by ="Country Code") %>% 
   full_join(GDP_growth, by="Country Code") %>% 
   full_join(population_growth, by="Country Code") %>% 
-  full_join(literacy, by="Country Code") %>%
   full_join(CPI, by=c("Country Code" = "ISO3"))
 non_WVS_data[149,1] <- "MOR" # Morocco is coded as MAR sa non wvs data
+non_WVS_data <- non_WVS_data %>% full_join(education, by = "Country Code")
 
 dataset <- left_join(WVS_Data_By_Country, non_WVS_data, by=c("B_COUNTRY_ALPHA" = "Country Code"))
 ## modify WVS_Data_By_Country to actual form of WVS variables for analysis
