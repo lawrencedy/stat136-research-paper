@@ -22,7 +22,7 @@ WVS_Data[WVS_Data == -5] = NA
 
 ## Dichotomizing likert variables and getting their mean
 WVS_Data_By_Country <- WVS_Data %>% mutate_at(vars(c(Q199, Q131)), funs(case_when( . == 1 | . == 2 ~ 1, TRUE ~ 0))) %>% mutate_at(vars(c(Q252, Q240)),
-    funs(case_when( . == 10 | . == 9 | . == 8 | . == 7 | . == 6 ~ 1, TRUE ~ 0))) %>% mutate(Q57=case_when(Q57 == 1 ~ 1, TRUE ~ 0)) %>% group_by(B_COUNTRY_ALPHA) %>% summarize(across(c(Q199, Q252, Q240, Q57, Q131, E1_LITERACY), ~ mean(.x, na.rm = TRUE)))
+    funs(case_when( . == 10 | . == 9 | . == 8 | . == 7 | . == 6 ~ 1, TRUE ~ 0))) %>% mutate(Q57=case_when(Q57 == 1 ~ 1, TRUE ~ 0)) %>% group_by(B_COUNTRY_ALPHA) %>% summarize(across(c(Q199, Q252, Q240, Q57, Q131), ~ mean(.x, na.rm = TRUE)))
 
 
 ## Nawawala yung political trust pakihanap saan, and limited countries lang ang political trust so maybe drop completely?
@@ -51,6 +51,9 @@ non_WVS_data <- non_WVS_data %>% full_join(education, by = "Country Code")
 
 dataset <- left_join(WVS_Data_By_Country, non_WVS_data, by=c("B_COUNTRY_ALPHA" = "Country Code"))
 ## modify WVS_Data_By_Country to actual form of WVS variables for analysis
+
+dataset[52,7] <- 78.9 # taiwan urban population from https://www.worldometers.info/world-population/taiwan-population/
+
 
 View(dataset)
 
