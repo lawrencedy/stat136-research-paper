@@ -80,9 +80,9 @@ View(dataset)
 ## DONE -> 4. Figure out a way to eliminate NAs from non-WVS data, e.g. use latest year data (even if not same year data), if we delete countries baka maubos na ang data
 ## DONE -> 5. Write the code to correct NAs in non-WVS data
 ## 6. Do descriptive analysis code
-## 7. Do initialization of full model using lm formula
-## 8. Conduct variable selection
-## 9. Do diagnostic checking (normality, linearity, heteroskedasticity, autocorrelation, correlation between indep var, outliers, influential observations)
+## DONE -> 7. Do initialization of full model using lm formula
+## DONE -> 8. Conduct variable selection
+## DONE -> 9. Do diagnostic checking (normality, linearity, heteroskedasticity, autocorrelation, correlation between indep var, outliers, influential observations)
 ## 10. Rerun final model for analysis using lm formula, interpret results
 ## Check zeros, moved deadline to June 8 or 10?
 
