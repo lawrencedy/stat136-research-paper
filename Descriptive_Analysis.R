@@ -80,4 +80,15 @@ outliers_cpi_2021 <- boxplot.stats(dataset$CPI)$out
 outliers_ind_cpi_2021 <- which(dataset$CPI %in% c(outliers_cpi_2021)) # New Zealand, Singapore
 
 ## Correlation Matrix of All Variables
+cor(dataset[, c(3:5, 7:11, 13)], method = "pearson")
 
+## Scatterplot of All Independent Variables vs CPI
+par(mfrow = c(3,3))
+plot(dataset$CPI ~ dataset$gdp_capita_2019, xlab = "GDP per Capita (2019)", ylab = "CPI")
+plot(dataset$CPI ~ dataset$gdp_growth_2019, xlab = "GDP Growth (2019)", ylab = "CPI")
+plot(dataset$CPI ~ dataset$pop_growth_2019, xlab = "Population Growth (2019)", ylab = "CPI")
+plot(dataset$CPI ~ dataset$urban_2020, xlab = "Urban Dwellers (2019)", ylab = "CPI")
+plot(dataset$CPI ~ dataset$democratic_governance, xlab = "Democratic Governance", ylab = "CPI")
+plot(dataset$CPI ~ dataset$government_surveillance, xlab = "Government Surveillance", ylab = "CPI")
+plot(dataset$CPI ~ dataset$moral_absolutism, xlab = "Moral Absolutism", ylab = "CPI")
+plot(dataset$CPI ~ dataset$social_trust, xlab = "Social Trust", ylab = "CPI")
