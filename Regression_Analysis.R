@@ -229,11 +229,26 @@ summary(pcr_mod)
 ols_test_outlier(reduced_model)
 ## 36 is most outlying but Bonferroni p-value not significant
 
-ols_prep_cdplot_outliers(reduced_model)
-## Influential observations based on Standardized Residuals: 8, 36, 41
+ols_plot_added_variable(reduced_model)
+## Partial regression plot
+
+ols_plot_resid_stand(reduced_model)
+## Outliers based on studentized residuals: 8, 14, 36, 41
+
+ols_leverage(reduced_model)
+ols_plot_resid_lev(reduced_model)
+## Outliers: 8, 14, 36, 41
+## High Leverage: 9, 42, 51
+
+## Maybe (?) delete #51 - Venezuela due to excessively high leverage due to -35% GDP growth due to collapse of state
+## Maybe (?) delete #42 - Singapore due to being very influential due to very high GDP per capita (PPP)
+
+ols_plot_resid_stud(reduced_model) 
+outlierTest(reduced_model)
+## #36 - New Zealand has the highest studentized residual, but not significant, NO OUTLIERS!!
 
 ols_plot_cooksd_bar(reduced_model)
-## Influential observations based on Cook's Distance: 8, 9, 36, 42
+## Influential observations based on Cook's Distance: 8, 9, 14, 36, 42
 
 ols_plot_dffits(reduced_model)
 ## Influential observations based on DFFITS: 8, 9, 14, 21, 36, 42
@@ -249,51 +264,27 @@ ols_plot_dfbetas(reduced_model)
 ## Influential observations on moral absolutism based on DFBETAS: 41, 46, 52
 ## Influential observations on Intercept based on DFBETAS: 2, 8, 14, 21, 30, 36
 
-ols_plot_resid_lev(reduced_model)
-## Outliers: 8, 14, 36, 41
-## High Leverage: 9, 42, 51
+## Outliers based on partial residual plot, studentized residuals
+## Influential Obs. based on Cook D, DFFITS, DFBETAS, Leverage
+## Outliers AND Influential Observations: 8, 14, 36
+## Outlier BUT NOT Influential Observation: 41
+## Influential Observations but NOT Outliers: 2, 4, 9, 21, 28, 30, 42, 46, 51, 52
 
-## Maybe (?) delete #51 - Venezuela due to excessively high leverage due to -35% GDP growth due to collapse of state
-## Maybe (?) delete #42 - Singapore due to being very influential due to very high GDP per capita (PPP)
-
-outlierTest(reduced_model)
-## #36 - New Zealand has the highest studentized residual
-
-# For Venezuela
-reduced_model_minus51 <- lm(CPI ~ gdp_capita_2019 + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset[-51, ])
-summary(reduced_model_minus51)  ## GDP growth becomes non-significant
-predict(reduced_model_minus51, dataset[51, -c(1, 13)], interval="predict")
-## PI contains actual value, so may or may not remove
-
-# For Singapore
-reduced_model_minus42 <- lm(CPI ~ gdp_capita_2019 + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset[-42, ])
-summary(reduced_model_minus42) 
-predict(reduced_model_minus42, dataset[42, -c(1, 13)], interval="predict")
-## PI contains actual value, so may or may not remove
+## Will do test for those that are Outliers AND Influential Observations only
+reduced_model_exoutliers <- lm(CPI ~ gdp_capita_2019 + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset[-c(8, 14, 36), ])
+summary(reduced_model_exoutliers)
 
 # For New Zealand
-reduced_model_minus36 <- lm(CPI ~ gdp_capita_2019 + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset[-36, ])
-summary(reduced_model_minus36)
-predict(reduced_model_minus36, dataset[36, -c(1, 13)], interval="predict")
-## PI does not contain actual value, may need restatement of model?
+predict(reduced_model_exoutliers, dataset[36, -c(1, 13)], interval="predict")
+## PI: [50.55, 78.53] does not contain 88, may need restatement of model
 
 # For Ethiopia
-reduced_model_minus14 <- lm(CPI ~ gdp_capita_2019 + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset[-14, ])
-summary(reduced_model_minus14) 
-predict(reduced_model_minus14, dataset[14, -c(1, 13)], interval="predict")
-## PI does not contain actual value (barely), may need restatement of model?
-
-# For China
-reduced_model_minus9 <- lm(CPI ~ gdp_capita_2019 + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset[-9, ])
-summary(reduced_model_minus9)  
-predict(reduced_model_minus9, dataset[9, -c(1, 13)], interval="predict")
-## PI contains actual value, so may or may not remove
+predict(reduced_model_exoutliers, dataset[14, -c(1, 13)], interval="predict")
+## PI: [9.25, 36.97] does not contain 39, may need restatement of model
 
 # For Chile
-reduced_model_minus8 <- lm(CPI ~ gdp_capita_2019 + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset[-8, ])
-summary(reduced_model_minus8) 
-predict(reduced_model_minus8, dataset[8, -c(1, 13)], interval="predict")
-## PI does not contain actual value, may need restatement of model?
+predict(reduced_model_exoutliers, dataset[8, -c(1, 13)], interval="predict")
+## PI: [34.93, 61.75] does not contain 67, may need restatement of model
 
 ## To do:
 ## 1. Figure out what to do when outliers are detected, as above
