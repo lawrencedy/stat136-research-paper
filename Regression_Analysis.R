@@ -1,5 +1,6 @@
 library(olsrr)
 library(car)
+library(pls)
 View(dataset)
 
 ## Initial Model
@@ -133,6 +134,10 @@ summary(reduced_model)
 anova(reduced_model)
 confint(reduced_model, level = 0.95)
 
+model4_scaled <- lm(scale(CPI) ~ scale(gdp_capita_2019) + scale(democratic_governance) + scale(moral_absolutism) + scale(social_trust) + scale(urban_2020) + scale(gdp_growth_2019) + scale(government_surveillance) + scale(pop_growth_2019), data = dataset)
+summary(model4_scaled)
+## standardized regression coeff to compare with PCR
+
 ## Diagnostic Analysis
 ols_plot_resid_qq(reduced_model)
 ols_plot_resid_box(reduced_model)
@@ -194,6 +199,31 @@ ols_coll_diag(reduced_model)
 vif(reduced_model)
 ols_vif_tol(reduced_model)
 ## GDP per capita has high VIF but not critical (<10), otherwise seems OK although there is moderate correlations
+
+pcr_reduced_model <- pcr(CPI ~ gdp_capita_2019 + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset, scale = TRUE, validation = "CV")
+pcr_reduced_model$projection
+pcr_reduced_model$loadings
+
+par(mfrow=c(1,3))
+validationplot(pcr_reduced_model, val.type = "RMSEP")
+validationplot(pcr_reduced_model, val.type = "MSEP")
+validationplot(pcr_reduced_model, val.type = "R2")
+
+summary(pcr_reduced_model)
+pcr_reduced_model$coefficients
+## 5 principal components the best
+## gdp_capita_2019          7.9112635   from  4.495
+## democratic_governance    3.4664810   from  1.950
+## moral_absolutism        -3.2694048   from  -2.065
+## social_trust             4.2003090   from  2.343
+## urban_2020               5.0267534   from  2.238
+## gdp_growth_2019          4.2383162   from  1.454
+## government_surveillance -2.1990133   from  -1.682
+## pop_growth_2019          0.6498462   from  1.290
+# Mukhang hindi naman masyado nagbabago ang conclusions with PCR so straight with linear regression is ok, this is just for checking
+
+pcr_mod <- lm(dataset$CPI~pcr_reduced_model$scores)
+summary(pcr_mod)
 
 # Outliers and Influential Observations
 ols_test_outlier(reduced_model)
