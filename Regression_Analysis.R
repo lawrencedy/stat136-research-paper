@@ -134,10 +134,6 @@ summary(reduced_model)
 anova(reduced_model)
 confint(reduced_model, level = 0.95)
 
-model4_scaled <- lm(scale(CPI) ~ scale(gdp_capita_2019) + scale(democratic_governance) + scale(moral_absolutism) + scale(social_trust) + scale(urban_2020) + scale(gdp_growth_2019) + scale(government_surveillance) + scale(pop_growth_2019), data = dataset)
-summary(model4_scaled)
-## standardized regression coeff to compare with PCR
-
 ## Diagnostic Analysis
 ols_plot_resid_qq(reduced_model)
 ols_plot_resid_box(reduced_model)
@@ -149,6 +145,7 @@ ols_plot_obs_fit(reduced_model)
 
 par(mfrow=c(2,2))
 plot(reduced_model)
+ols_plot_comp_plus_resid(reduced_model)
 ## No apparent deviation from Linearity
 ## Some minor deviation from diagonal line in QQ plot
 ## Scale-location plot seems somewhat problematic for heteroskedasticity
@@ -200,7 +197,7 @@ vif(reduced_model)
 ols_vif_tol(reduced_model)
 ## GDP per capita has high VIF but not critical (<10), otherwise seems OK although there is moderate correlations
 
-pcr_reduced_model <- pcr(CPI ~ gdp_capita_2019 + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset, scale = TRUE, validation = "CV")
+pcr_reduced_model <- pcr(CPI ~ gdp_capita_2019 + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset, scale = FALSE, validation = "CV")
 pcr_reduced_model$projection
 pcr_reduced_model$loadings
 
@@ -211,15 +208,6 @@ validationplot(pcr_reduced_model, val.type = "R2")
 
 summary(pcr_reduced_model)
 pcr_reduced_model$coefficients
-## 5 principal components the best
-## gdp_capita_2019          7.9112635   from  4.495
-## democratic_governance    3.4664810   from  1.950
-## moral_absolutism        -3.2694048   from  -2.065
-## social_trust             4.2003090   from  2.343
-## urban_2020               5.0267534   from  2.238
-## gdp_growth_2019          4.2383162   from  1.454
-## government_surveillance -2.1990133   from  -1.682
-## pop_growth_2019          0.6498462   from  1.290
 # Mukhang hindi naman masyado nagbabago ang conclusions with PCR so straight with linear regression is ok, this is just for checking
 
 pcr_mod <- lm(dataset$CPI~pcr_reduced_model$scores)
@@ -291,4 +279,156 @@ predict(reduced_model_exoutliers, dataset[8, -c(1, 13)], interval="predict")
 ## 2. Figure out if we are going to do transformations of the data
 ## 3. Figure out how to know if we need interaction variables
 ## 4. After figuring out the above, define final model
+
+
+## LOG-TRANSFORMED GDP ATTEMPT
+log_gdp_model <- lm(CPI ~ log(gdp_capita_2019) + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset)
+summary(log_gdp_model)
+anova(log_gdp_model)
+ols_regress(log_gdp_model) 
+
+## Diagnostic Analysis
+ols_plot_resid_qq(log_gdp_model)
+ols_plot_resid_box(log_gdp_model)
+ols_plot_resid_hist(log_gdp_model)
+## Not 100% normal but still roughly bell shaped
+
+ols_plot_obs_fit(log_gdp_model)
+## Close to expected fit but slightly off
+
+par(mfrow=c(2,2))
+plot(log_gdp_model)
+ols_plot_comp_plus_resid(log_gdp_model)
+## No apparent deviation from Linearity
+## Some minor deviation from diagonal line in QQ plot
+## Scale-location plot seems somewhat problematic for heteroskedasticity
+## Observations 9, 36, 42 appear to be influential
+
+# Linearity
+crPlots(log_gdp_model)
+## None of the variables appear to be nonnormal, they roughly follow the dotted line
+
+# Test for Heteroskedasticity
+ols_plot_resid_fit(log_gdp_model)
+ols_test_breusch_pagan(log_gdp_model) ## p = 0.5267271 -> homoskedastic
+
+par(mfrow=c(2,4))
+plot(dataset$democratic_governance, resid(log_gdp_model))
+plot(dataset$gdp_capita_2019, resid(log_gdp_model))
+plot(dataset$moral_absolutism, resid(log_gdp_model))
+plot(dataset$social_trust, resid(log_gdp_model))
+plot(dataset$pop_growth_2019, resid(log_gdp_model))
+plot(dataset$government_surveillance, resid(log_gdp_model))
+plot(dataset$urban_2020, resid(log_gdp_model))
+plot(dataset$gdp_growth_2019, resid(log_gdp_model))
+## No obvious heteroskedasticity
+
+# Test for Normality
+ols_test_normality(log_gdp_model) ## 3 of 4 tests have p > 0.05, can assume normality
+
+# Test for Autocorrelation
+durbinWatsonTest(log_gdp_model)  ## p = 0.788, no significant autocorrelation
+
+# Checks for Multicollinearity
+ols_regress(log(gdp_capita_2019) ~ democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset) ## R^2 = 0.816 - bad
+ols_regress(democratic_governance ~ log(gdp_capita_2019) + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset) ## R^2 = 0.653 - kinda bad
+ols_regress(moral_absolutism ~ log(gdp_capita_2019) + democratic_governance + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset) ## R^2 = 0.120
+ols_regress(social_trust ~ log(gdp_capita_2019) + democratic_governance + moral_absolutism + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset) ## R^2 = 0.518 - kinda bad
+ols_regress(urban_2020 ~ log(gdp_capita_2019) + democratic_governance + moral_absolutism + social_trust + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset) ## R^2 = 0.540 - kinda bad
+ols_regress(gdp_growth_2019 ~ log(gdp_capita_2019) + democratic_governance + moral_absolutism + social_trust + urban_2020 + government_surveillance + pop_growth_2019, data = dataset) ## R^2 = 0.583 - kinda bad
+ols_regress(government_surveillance ~ log(gdp_capita_2019) + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + pop_growth_2019, data = dataset) ## R^2 = 0.383
+ols_regress(pop_growth_2019 ~ log(gdp_capita_2019) + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance, data = dataset) ## R^2 = 0.410
+
+cor(dataset[, c(3:5, 7:11, 13)], method = "pearson")
+pairs(dataset[, c(3:5, 7:11, 13)])
+## High correlation between social trust and democratic governance, between GDP per capita and social trust, Urban 2020, gov't surveillance and pop growth
+
+ols_coll_diag(log_gdp_model)
+## Condition Index = 92 so not OK (says old paper), vif gets worse
+
+vif(log_gdp_model)
+ols_vif_tol(log_gdp_model)
+## GDP per capita, urban_2020 has high VIF but not critical (<10), otherwise seems OK although there is moderate correlations
+
+pcr_log_gdp_model <- pcr(CPI ~ log(gdp_capita_2019) + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset, scale = FALSE, validation = "CV")
+pcr_log_gdp_model$projection
+pcr_log_gdp_model$loadings
+
+par(mfrow=c(1,3))
+validationplot(pcr_log_gdp_model, val.type = "RMSEP")
+validationplot(pcr_log_gdp_model, val.type = "MSEP")
+validationplot(pcr_log_gdp_model, val.type = "R2")
+
+summary(pcr_log_gdp_model)
+pcr_log_gdp_model$coefficients
+# Mukhang hindi naman masyado nagbabago ang conclusions with PCR so straight with linear regression is ok, this is just for checking
+
+pcr_mod_log_gdp <- lm(dataset$CPI~pcr_log_gdp_model$scores)
+summary(pcr_mod_log_gdp)
+
+# Outliers and Influential Observations
+ols_test_outlier(log_gdp_model)
+## 14 is most outlying but Bonferroni p-value not significant
+
+ols_plot_added_variable(log_gdp_model)
+## Partial regression plot
+
+ols_plot_resid_stand(log_gdp_model)
+## Outliers based on studentized residuals: 14, 23, 36
+
+ols_leverage(log_gdp_model)
+ols_plot_resid_lev(log_gdp_model)
+## Outliers: 14, 23, 36
+## High Leverage: 9, 51
+
+## Maybe (?) delete #51 - Venezuela due to excessively high leverage due to -35% GDP growth due to collapse of state
+## Maybe (?) delete #42 - Singapore due to being very influential due to very high GDP per capita (PPP)
+
+ols_plot_resid_stud(log_gdp_model) 
+outlierTest(log_gdp_model)
+## #14 - New Zealand has the highest studentized residual, but not significant, NO OUTLIERS!!
+
+ols_plot_cooksd_bar(log_gdp_model)
+## Influential observations based on Cook's Distance: 9, 14, 21, 36
+
+ols_plot_dffits(log_gdp_model)
+## Influential observations based on DFFITS: 9, 14, 21, 36
+
+## NOT YET DONE
+ols_plot_dfbetas(log_gdp_model)
+## Influential observations on pop. growth based on DFBETAS: 9, 14, 36, 41, 42
+## Influential observations on social trust based on DFBETAS: 9, 36, 42
+## Influential observations on GDP growth based on DFBETAS: 2, 42, 51
+## Influential observations on urban 2020 based on DFBETAS: 8, 14, 21, 36, 42
+## Influential observations on gov't surveillance based on DFBETAS: 8, 9, 21, 28, 42
+## Influential observations on democratic governance based on DFBETAS: 4, 8, 14, 21, 28
+## Influential observations on GDP per capita based on DFBETAS: 8, 9, 21, 42 (!!!)
+## Influential observations on moral absolutism based on DFBETAS: 41, 46, 52
+## Influential observations on Intercept based on DFBETAS: 2, 8, 14, 21, 30, 36
+
+## Outliers based on partial residual plot, studentized residuals
+## Influential Obs. based on Cook D, DFFITS, DFBETAS, Leverage
+## Outliers AND Influential Observations: 8, 14, 36
+## Outlier BUT NOT Influential Observation: 41
+## Influential Observations but NOT Outliers: 2, 4, 9, 21, 28, 30, 42, 46, 51, 52
+
+## Will do test for those that are Outliers AND Influential Observations only
+log_gdp_model_exoutliers <- lm(CPI ~ gdp_capita_2019 + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance + pop_growth_2019, data = dataset[-c(8, 14, 36), ])
+summary(log_gdp_model_exoutliers)
+
+# For New Zealand
+predict(log_gdp_model_exoutliers, dataset[36, -c(1, 13)], interval="predict")
+## PI: [50.55, 78.53] does not contain 88, may need restatement of model
+
+# For Ethiopia
+predict(log_gdp_model_exoutliers, dataset[14, -c(1, 13)], interval="predict")
+## PI: [9.25, 36.97] does not contain 39, may need restatement of model
+
+# For Chile
+predict(log_gdp_model_exoutliers, dataset[8, -c(1, 13)], interval="predict")
+## PI: [34.93, 61.75] does not contain 67, may need restatement of model
+
+
+
+
 

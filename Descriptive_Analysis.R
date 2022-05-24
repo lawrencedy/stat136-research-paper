@@ -100,6 +100,16 @@ plot(dataset$CPI ~ dataset$urban_2020, xlab = "Urban Dwellers (2019)", ylab = "C
 plot(dataset$CPI ~ dataset$gdp_capita_2019, xlab = "GDP per Capita (2019)", ylab = "CPI")
 plot(dataset$CPI ~ dataset$gdp_growth_2019, xlab = "GDP Growth (2019)", ylab = "CPI")
 plot(dataset$CPI ~ dataset$pop_growth_2019, xlab = "Population Growth (2019)", ylab = "CPI")
+<<<<<<< HEAD
 plot(dataset$CPI ~ dataset$education_2019, xlab = "Education Index (2019)", ylab = "CPI")
 
 
+=======
+plot(dataset$CPI ~ dataset$urban_2020, xlab = "Urban Dwellers (2019)", ylab = "CPI")
+plot(dataset$CPI ~ dataset$democratic_governance, xlab = "Democratic Governance", ylab = "CPI")
+plot(dataset$CPI ~ dataset$government_surveillance, xlab = "Government Surveillance", ylab = "CPI")
+plot(dataset$CPI ~ dataset$moral_absolutism, xlab = "Moral Absolutism", ylab = "CPI")
+plot(dataset$CPI ~ dataset$social_trust, xlab = "Social Trust", ylab = "CPI")
+
+## To add: analysis of the distribution of % for each WVS question (per country)
+>>>>>>> dff622a3e53b9543673fa58a89bb165bcb2739c6
