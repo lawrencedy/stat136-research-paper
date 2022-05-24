@@ -92,3 +92,5 @@ plot(dataset$CPI ~ dataset$democratic_governance, xlab = "Democratic Governance"
 plot(dataset$CPI ~ dataset$government_surveillance, xlab = "Government Surveillance", ylab = "CPI")
 plot(dataset$CPI ~ dataset$moral_absolutism, xlab = "Moral Absolutism", ylab = "CPI")
 plot(dataset$CPI ~ dataset$social_trust, xlab = "Social Trust", ylab = "CPI")
+
+## To add: analysis of the distribution of % for each WVS question (per country)
