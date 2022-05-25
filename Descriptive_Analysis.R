@@ -1,6 +1,8 @@
 library(tidyverse)
 library(psych)
 library(sjstats)
+library(tidyr)
+library(dplyr)
 
 ## You may use WVS_Data_Individual dataset to get summaries for individual questions
 
@@ -19,7 +21,7 @@ non_wvs_desc_stat2 <- describe(dataset[, c(1, 8:13)])
 
 quantiles <-
   data.frame(matrix(
-    c(2, 2.662, 5, 8, 1, 2, 2, 2, 1, 3, 2, 4,
+    c(2, 3, 5, 8, 3, 7, 2, 2, 1, 3, 2, 4,
       54.19, 81.42, 9019, 29967, 1.145, 4.601, 0.3547, 1.4698, 0.63, 0.827, 28, 49),
     nrow = 12,
     ncol = 2,
@@ -36,6 +38,7 @@ rownames(partial_desc_stat)[c(1:6, 12)] <- c("political_interest", "democratic_g
                                              "government_surveillance", "CPI score 2021")
 
 desc_stat <- cbind(partial_desc_stat, quantiles)
+desc_stat$CV <- desc_stat$sd/desc_stat$mean
 colnames(desc_stat)[14:15] <- c("1st Qu", "3rd Qu")
 
 # Proportion of responses for each option for WVS Data
@@ -45,8 +48,8 @@ democratic_governance <- WVS_Data_Individual %>% group_by(B_COUNTRY_ALPHA) %>%
   prop(Q251 == 1, Q251 == 2, Q251 == 3, Q251 == 4, Q251 == 5, Q251 == 6,
        Q251 == 7, Q251 == 8, Q251 == 9, Q251 == 10)
 moral_absolutism <- WVS_Data_Individual %>% group_by(B_COUNTRY_ALPHA) %>%
-  prop(Q175 == 1, Q175 == 2, Q175 == 3, Q175 == 4, Q175 == 5, Q175 == 6,
-       Q175 == 7, Q175 == 8, Q175 == 9, Q175 == 10)
+  prop(Q176 == 1, Q176 == 2, Q176 == 3, Q176 == 4, Q176 == 5, Q176 == 6,
+       Q176 == 7, Q176 == 8, Q176 == 9, Q176 == 10)
 social_trust <- WVS_Data_Individual %>% group_by(B_COUNTRY_ALPHA) %>%
   prop(Q57 == 1, Q57 == 2)
 security_perception <- WVS_Data_Individual %>% group_by(B_COUNTRY_ALPHA) %>%
@@ -55,6 +58,8 @@ government_surveillance <- WVS_Data_Individual %>% group_by(B_COUNTRY_ALPHA) %>%
   prop(Q198 == 1, Q198 == 2, Q198 == 3, Q198 == 4)
 
 ## Boxplots for non-WVS independent variables and the CPI response variable, note outliers
+par(mfrow = c(2, 3))
+
 # urban_2020
 boxplot(dataset$urban_2020, main = "Boxplot of urban_2020")
 
@@ -82,12 +87,25 @@ ols_plot_response(reduced_model)
 
 ## Correlation Matrix of All Variables
 cor(dataset[, c(3:5, 7:11, 13)], method = "pearson")
+cor(dataset[, c(2:13)], method = "pearson")
 
 ## Scatterplot of All Independent Variables vs CPI
-par(mfrow = c(3,3))
+par(mfrow = c(4,3))
+plot(dataset$CPI ~ dataset$political_interest, xlab = "Political Interest", ylab = "CPI")
+plot(dataset$CPI ~ dataset$democratic_governance, xlab = "Democratic Governance", ylab = "CPI")
+plot(dataset$CPI ~ dataset$moral_absolutism, xlab = "Moral Absolutism", ylab = "CPI")
+plot(dataset$CPI ~ dataset$social_trust, xlab = "Social Trust", ylab = "CPI")
+plot(dataset$CPI ~ dataset$security_perception, xlab = "Security Perception", ylab = "CPI")
+plot(dataset$CPI ~ dataset$government_surveillance, xlab = "Government Surveillance", ylab = "CPI")
+plot(dataset$CPI ~ dataset$urban_2020, xlab = "Urban Dwellers (2019)", ylab = "CPI")
 plot(dataset$CPI ~ dataset$gdp_capita_2019, xlab = "GDP per Capita (2019)", ylab = "CPI")
 plot(dataset$CPI ~ dataset$gdp_growth_2019, xlab = "GDP Growth (2019)", ylab = "CPI")
 plot(dataset$CPI ~ dataset$pop_growth_2019, xlab = "Population Growth (2019)", ylab = "CPI")
+<<<<<<< HEAD
+plot(dataset$CPI ~ dataset$education_2019, xlab = "Education Index (2019)", ylab = "CPI")
+
+
+=======
 plot(dataset$CPI ~ dataset$urban_2020, xlab = "Urban Dwellers (2019)", ylab = "CPI")
 plot(dataset$CPI ~ dataset$democratic_governance, xlab = "Democratic Governance", ylab = "CPI")
 plot(dataset$CPI ~ dataset$government_surveillance, xlab = "Government Surveillance", ylab = "CPI")
@@ -95,3 +113,4 @@ plot(dataset$CPI ~ dataset$moral_absolutism, xlab = "Moral Absolutism", ylab = "
 plot(dataset$CPI ~ dataset$social_trust, xlab = "Social Trust", ylab = "CPI")
 
 ## To add: analysis of the distribution of % for each WVS question (per country)
+>>>>>>> dff622a3e53b9543673fa58a89bb165bcb2739c6

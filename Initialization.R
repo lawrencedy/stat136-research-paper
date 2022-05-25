@@ -25,7 +25,7 @@ WVS_Data[WVS_Data == -5] = NA
 WVS_Data_By_Country <- WVS_Data %>% mutate_at(vars(c(Q199, Q131, Q198)), funs(case_when( . == 1 | . == 2 ~ 1, . == 3 | . == 4 ~ 0))) %>% mutate_at(vars(c(Q251, Q176)),
     funs(case_when( . == 10 | . == 9 | . == 8 | . == 7 | . == 6 ~ 1, . == 5 | . == 4 | . == 3 | . == 2 | . == 1 ~ 0))) %>% mutate(Q57=case_when(Q57 == 1 ~ 1, Q57 == 2 ~ 0)) %>% group_by(B_COUNTRY_ALPHA) %>% summarize(across(c(Q199, Q251, Q176, Q57, Q131, Q198), ~ mean(.x, na.rm = TRUE)))
 
-WVS_Data_Individual <- WVS_Data %>% filter(!B_COUNTRY_ALPHA %in% c("AND", "MAC", "PRI", "EGY")) %>% select(c(B_COUNTRY_ALPHA, Q199, Q251, Q175, Q57, Q131, Q198)) ## Individual level data for WVS Dataset, excluding four countries removed from analysis
+WVS_Data_Individual <- WVS_Data %>% filter(!B_COUNTRY_ALPHA %in% c("AND", "MAC", "PRI", "EGY")) %>% select(c(B_COUNTRY_ALPHA, Q199, Q251, Q176, Q57, Q131, Q198)) ## Individual level data for WVS Dataset, excluding four countries removed from analysis.
 
 CPI <- read_xlsx("EXCEL - CORRUPTION PERCEPTIONS INDEX 2021 (GLOBAL RESULTS AND TRENDS).xlsx", skip = 2) 
 CPI <- CPI %>% select(2, 4)
