@@ -78,6 +78,7 @@ boxplot(dataset$education_2019, main = "Boxplot of education_2019")
 boxplot(dataset$CPI, main = "Boxplot of CPI score 2021")
 outliers_cpi_2021 <- boxplot.stats(dataset$CPI)$out
 outliers_ind_cpi_2021 <- which(dataset$CPI %in% c(outliers_cpi_2021)) # New Zealand, Singapore
+ols_plot_response(reduced_model)
 
 ## Correlation Matrix of All Variables
 cor(dataset[, c(3:5, 7:11, 13)], method = "pearson")
