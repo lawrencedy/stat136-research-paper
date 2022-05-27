@@ -101,11 +101,7 @@ plot(dataset$CPI ~ dataset$urban_2020, xlab = "Urban Dwellers (2019)", ylab = "C
 plot(dataset$CPI ~ dataset$gdp_capita_2019, xlab = "GDP per Capita (2019)", ylab = "CPI")
 plot(dataset$CPI ~ dataset$gdp_growth_2019, xlab = "GDP Growth (2019)", ylab = "CPI")
 plot(dataset$CPI ~ dataset$pop_growth_2019, xlab = "Population Growth (2019)", ylab = "CPI")
-<<<<<<< HEAD
 plot(dataset$CPI ~ dataset$education_2019, xlab = "Education Index (2019)", ylab = "CPI")
-
-
-=======
 plot(dataset$CPI ~ dataset$urban_2020, xlab = "Urban Dwellers (2019)", ylab = "CPI")
 plot(dataset$CPI ~ dataset$democratic_governance, xlab = "Democratic Governance", ylab = "CPI")
 plot(dataset$CPI ~ dataset$government_surveillance, xlab = "Government Surveillance", ylab = "CPI")
