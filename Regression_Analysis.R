@@ -1,6 +1,7 @@
 library(olsrr)
 library(car)
 library(pls)
+library(corrplot)
 View(dataset)
 
 ## Initial Model
@@ -188,8 +189,12 @@ ols_regress(gdp_growth_2019 ~ gdp_capita_2019 + democratic_governance + moral_ab
 ols_regress(government_surveillance ~ gdp_capita_2019 + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + pop_growth_2019, data = dataset) ## R^2 = 0.383
 ols_regress(pop_growth_2019 ~ gdp_capita_2019 + democratic_governance + moral_absolutism + social_trust + urban_2020 + gdp_growth_2019 + government_surveillance, data = dataset) ## R^2 = 0.410
 
-cor(dataset[, c(3:5, 7:11, 13)], method = "pearson")
-pairs(dataset[, c(3:5, 7:11, 13)])
+correl_matrix <- cor(dataset[, c(3:5, 7:11, 14)], method = "pearson")
+pairs(dataset[, c(3:5, 7:11, 14)])
+# matrix of the p-value of the correlation
+
+col <- colorRampPalette(c("#4477AA", "#77AADD", "#FFFFFF", "#EE9988", "#BB4444"))
+corrplot(correl_matrix, method="color", diag = FALSE, addCoef.col = "black", col=col(200))
 
 ## High correlation between social trust and democratic governance, between GDP per capita and social trust, Urban 2020, gov't surveillance and pop growth
 
