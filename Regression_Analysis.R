@@ -4,7 +4,7 @@ library(pls)
 View(dataset)
 
 ## Initial Model
-initial_model <- lm(CPI ~ political_interest + democratic_governance + moral_absolutism + social_trust + security_perception + government_surveillance + urban_2020 + gdp_capita_2019 + gdp_growth_2019 + pop_growth_2019 + education_2019, data = dataset)
+initial_model <- lm(CPI ~ factor(Region) + political_interest + democratic_governance + moral_absolutism + social_trust + security_perception + government_surveillance + urban_2020 + gdp_capita_2019 + gdp_growth_2019 + pop_growth_2019 + education_2019, data = dataset)
 summary(initial_model)
 anova(initial_model)
 ols_regress(initial_model) 
@@ -190,6 +190,7 @@ ols_regress(pop_growth_2019 ~ gdp_capita_2019 + democratic_governance + moral_ab
 
 cor(dataset[, c(3:5, 7:11, 13)], method = "pearson")
 pairs(dataset[, c(3:5, 7:11, 13)])
+
 ## High correlation between social trust and democratic governance, between GDP per capita and social trust, Urban 2020, gov't surveillance and pop growth
 
 ols_coll_diag(reduced_model)
@@ -294,5 +295,3 @@ predict(reduced_model_exoutliers, dataset[51, -c(1, 13)], interval="predict")
 ## 2. Figure out if we are going to do transformations of the data
 ## 3. Figure out how to know if we need interaction variables
 ## 4. After figuring out the above, define final model
-
-

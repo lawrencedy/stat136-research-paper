@@ -28,7 +28,7 @@ WVS_Data_By_Country <- WVS_Data %>% mutate_at(vars(c(Q199, Q131, Q198)), funs(ca
 WVS_Data_Individual <- WVS_Data %>% filter(!B_COUNTRY_ALPHA %in% c("AND", "MAC", "PRI", "EGY")) %>% select(c(B_COUNTRY_ALPHA, Q199, Q251, Q176, Q57, Q131, Q198)) ## Individual level data for WVS Dataset, excluding four countries removed from analysis.
 
 CPI <- read_xlsx("EXCEL - CORRUPTION PERCEPTIONS INDEX 2021 (GLOBAL RESULTS AND TRENDS).xlsx", skip = 2) 
-CPI <- CPI %>% select(2, 4)
+CPI <- CPI %>% select(2, 3, 4)
 
 urban <- read_csv("API_SP.URB.TOTL.IN.ZS_DS2_en_csv_v2_4030202.csv", skip = 4) %>% select(c(2, 65)) %>% rename(urban_2020 = '2020')
 GDP_capita <- read_csv("API_NY.GDP.PCAP.PP.CD_DS2_en_csv_v2_4022086.csv", skip = 4) %>% select(c(2, 64)) %>% rename(gdp_capita_2019 = '2019') ## Used 2019 data since 2020 is weird for GDP for obvious reasons
